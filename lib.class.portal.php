@@ -29,7 +29,7 @@ class ModPortal extends Addon {
         if ($r === false) return "Неизвестная ошибка!";
         if ($r->fetchRow()['pcount'] > 0) return "У модулей wbs_portal_obj_* есть объекты!";
         
-        // проверка, есть секция, сам WebsiteBaker
+        // проверяет, есть секция, сам WebsiteBaker
         
         // удаляем таблицы
 
