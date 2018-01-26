@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `{TABLE_PREFIX}mod_wbs_portal_obj_settings`;
 CREATE TABLE `{TABLE_PREFIX}mod_wbs_portal_obj_settings` (
   `obj_id` int(11) NOT NULL AUTO_INCREMENT,
   `page_id` int(11) NOT NULL,
+  `section_id` int(11) NOT NULL,
   `obj_type_id` int(11) NOT NULL,
   `is_active` int(11) NOT NULL DEFAULT 1,
   `is_deleted` int(11) NOT NULL DEFAULT '0',

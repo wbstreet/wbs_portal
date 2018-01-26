@@ -17,6 +17,7 @@ $clsModPortal = new ModPortal($page_id, $section_id);
 
 $r = $clsModPortal->section_add();
 if ($r !== true) {
+    delete_row(TABLE_PREFIX."sections", glue_fields(['page_id'=>$page_id, 'section_id'=>$section_id], 'AND'));
     $admin->print_header();
     $admin->print_error($r);
 }

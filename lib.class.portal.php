@@ -4,6 +4,7 @@ $path_core = WB_PATH.'/modules/wbs_core/include_all.php';
 if (file_exists($path_core )) include($path_core );
 else echo "<script>console.log('Модуль wbs_portal требует модуль wbs_core')</script>";
 
+if (!class_exists('ModPortal')) {
 class ModPortal extends Addon {
 
     function __construct($page_id, $section_id) {
@@ -18,7 +19,7 @@ class ModPortal extends Addon {
 
         // проверяем, существует хоть какой-нибудь модуль wbs_portal_obj_*
 
-        $r = select_row($this->tbl_obj_type, 'COUNT(`page_id`) as pcount');
+        $r = select_row($this->tbl_obj_type, 'COUNT(`obj_type_id`) as pcount');
         if ($r === false) return "Неизвестная ошибка!";
         if ($r->fetchRow()['pcount'] > 0) return "Существуют модули wbs_portal_obj_* !";
         
@@ -51,9 +52,9 @@ class ModPortal extends Addon {
 
         // проверяем, существует хоть какой-нибудь модуль wbs_portal_obj_*
 
-        $r = select_row($this->tbl_obj_type, 'COUNT(`page_id`) as pcount');
+        $r = select_row($this->tbl_obj_type, 'COUNT(`obj_type_id`) as ocount');
         if ($r === false) return "Неизвестная ошибка!";
-        if ($r->fetchRow()['pcount'] === 0) return "Отсутствуют модули wbs_portal_obj_* !";
+        if ($r !== null && $r->fetchRow()['ocount'] === '0') return "Отсутствуют модули wbs_portal_obj_* !";
         
         // добавляем настройки для данной секции
 
@@ -72,11 +73,12 @@ class ModPortal extends Addon {
         
         $r = select_row($this->tbl_obj_settings, 'COUNT(`page_id`) as pcount', "`page_id`=".process_value($this->page_id));
         if ($r === false) return "Неизвестная ошибка!";
-        if ($r->fetchRow()['pcount'] > 0) return "У данной секции есть объекты!";
+        print_error(gettype($r->fetchRow()['pcount']));
+        if ($r !== null && $r->fetchRow()['pcount'] > 0) return "У данной секции есть объекты!";
 
         // если нет, удаляем настройки для данной секции
 
-        $r = delete_row($this->tbl_obj_data, "`page_id`=".process_value($this->page_id));
+        $r = delete_row($this->tbl_obj_settings, glue_fields(['page_id'=>$this->page_id, 'section_id'=>$this->section_id], 'AND'));
 
         return $r;
         
@@ -99,6 +101,11 @@ class ModPortal extends Addon {
         // если не используется, то удаляем объект
     
     }
+    
+    //function obj_type_get($sets) {
+    //    $keys = glue_fields($sets, 'AND');
+    //    return select_row($this->tbl_obj_type, '*', $fields);
+    //}
 }
-
+}
 ?>

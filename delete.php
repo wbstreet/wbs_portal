@@ -19,6 +19,8 @@ $r = $clsModPortal->section_delete();
 if ($r !== true) {
     $admin->print_header();
     $admin->print_error($r);
+    $admin->print_footer();
+    die();
 }
 
 ?> 
