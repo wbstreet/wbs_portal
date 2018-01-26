@@ -1,0 +1,4 @@
+-- INSERT INTO `{TABLE_PREFIX}mod_wbsportal_obj_type` (`obj_type_id`, `obj_type_latname`, `obj_type_name`, `obj_type_is_active`) VALUES
+-- (1, "pages", "Cтраница", 1),
+-- (2, "apartment", "Недвижимость", 1),
+-- (3, "service", "Услуги", 1);
