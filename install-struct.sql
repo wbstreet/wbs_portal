@@ -24,6 +24,7 @@ CREATE TABLE `{TABLE_PREFIX}mod_wbs_portal_obj_settings` (
   `page_id` int(11) NOT NULL,
   `section_id` int(11) NOT NULL,
   `obj_type_id` int(11) NOT NULL,
+  `user_owner_id` int(11) NOT NULL,
   `is_active` int(11) NOT NULL DEFAULT 1,
   `is_deleted` int(11) NOT NULL DEFAULT '0',
   `moder_status` int(11) NOT NULL DEFAULT '2',

@@ -4,16 +4,28 @@ $path_core = WB_PATH.'/modules/wbs_core/include_all.php';
 if (file_exists($path_core )) include($path_core );
 else echo "<script>console.log('Модуль wbs_portal требует модуль wbs_core')</script>";
 
-if (!class_exists('ModPortal')) {
-class ModPortal extends Addon {
+if (!class_exists('_ModPortal')) {
+class _ModPortal extends Addon {
 
-    function __construct($page_id, $section_id) {
-        parent::__construct('wbs_portal', $page_id, $section_id);
+    function __construct($name, $page_id, $section_id) {
+        parent::__construct($name, $page_id, $section_id);
         $this->tbl_obj_type = "`".TABLE_PREFIX."mod_wbs_portal_obj_type`";
         $this->tbl_obj_settings = "`".TABLE_PREFIX."mod_wbs_portal_obj_settings`";        
         $this->tbl_section_settings = "`".TABLE_PREFIX."mod_wbs_portal_section_settings`";        
     }
 
+}
+}
+
+/* Используется этим модулем */
+if (!class_exists('ModPortal')) {
+class ModPortal extends _ModPortal {
+
+    function __construct($page_id, $section_id) {
+        parent::__construct('wbs_portal', $page_id, $section_id);
+    }
+
+    /* В дочернем классе должен быть переопределён */
     function uninstall() {
         global $database;
 
@@ -71,41 +83,97 @@ class ModPortal extends Addon {
 
         // проверяем, существует хоть какой-нибудь объект в данной секции
         
-        $r = select_row($this->tbl_obj_settings, 'COUNT(`page_id`) as pcount', "`page_id`=".process_value($this->page_id));
+        $r = select_row($this->tbl_obj_settings, 'COUNT(`page_id`) as pcount', "`page_id`=".process_value($this->page_id)." AND "."`section_id`=".process_value($this->section_id));
         if ($r === false) return "Неизвестная ошибка!";
-        print_error(gettype($r->fetchRow()['pcount']));
         if ($r !== null && $r->fetchRow()['pcount'] > 0) return "У данной секции есть объекты!";
 
         // если нет, удаляем настройки для данной секции
 
-        $r = delete_row($this->tbl_obj_settings, glue_fields(['page_id'=>$this->page_id, 'section_id'=>$this->section_id], 'AND'));
+        $r = delete_row($this->tbl_section_settings, glue_fields(['page_id'=>$this->page_id, 'section_id'=>$this->section_id], 'AND'));
 
         return $r;
         
     }
-    
-    function obj_type_add($obj_name) {
+
+}
+}
+
+/* Используется модулями wbs_portal_obj_* */
+if (!class_exists('ModPortalObj')) {
+class ModPortalObj extends _ModPortal {
+
+    public $prefix = 'wbs_portal_obj_';
+
+    function __construct($latname, $name, $page_id, $section_id) {
+        parent::__construct($this->prefix.$name, $page_id, $section_id);
+        
+        $this->obj_type_latname = $latname;
+        $this->obj_type_name = $name;
+    }
+
+    /* Используется модулями wbs_portal_obj_* в процессе их установки */
+    function install($sql_lines=null) {
         global $database;
 
-        // проверяем на yаличие дубликата
-        
+        // проверяем на наличие дубликата
+
+        $r = select_row($this->tbl_obj_type, '*', "`obj_type_latname`=".process_value($this->obj_type_latname));
+        if ($r === false) return "Неизвестная ошибка!";
+        if ($r !== null && $r->fetchRow()['ocount'] !== '0') return "Модуль с таким названием уже существует!";
+
         // если дубликатата нет, то добавляем
+
+        if ($sql_lines !== null) {
+            foreach ($sql_lines as $sql_line) $database->query($sql_line);
+        }
+
+        $r = insert_row($this->tbl_obj_type, ['obj_type_latname'=>$this->obj_type_latname, 'obj_type_name'=>$this->obj_type_name]);
+        if ($r === false) return "Неизвестная ошибка!";
+        
+        return true;
     
     }
-    
-    function obj_type_delete($obj_name) {
+
+    function uninstall($sql_lines=null) {
         global $database;
     
-        // проверяем, используется ли этот объект на секциях
-        
+        // проверяем, есть ли объекты в какой-либо из секций
+
+        $r = select_row(
+            [$this->tbl_obj_settings, $this->tbl_obj_type],
+            'COUNT(`page_id`) as pcount',
+            $this->tbl_obj_type.".`obj_type_latname`=".process_value($this->obj_type_latname)." AND ".$this->tbl_obj_settings.".`obj_type_id`=".$this->tbl_obj_type.".`obj_type_id`"
+        );
+        if ($r === false) return "Неизвестная ошибка!";
+        if ($r->fetchRow()['pcount'] > 0) return "У модуля есть объекты!";
+
+        // проверяем, используется ли этот модуль на секциях
+
+        $r = select_row(
+            [$this->tbl_section_settings, $this->tbl_obj_type],
+            'COUNT(`page_id`) as pcount',
+            $this->tbl_obj_type.".`obj_type_latname`=".process_value($this->obj_type_latname)." AND ".$this->tbl_section_settings.".`section_obj_type`=".$this->tbl_obj_type.".`obj_type_id`"
+        );
+        if ($r === false) return "Неизвестная ошибка!";
+        if ($r !== null && $r->fetchRow()['pcount'] !== '0') return "Модуль установлен на некоторых секциях!";
+
         // если не используется, то удаляем объект
-    
+
+        if ($sql_lines !== null) {
+            foreach ($sql_lines as $sql_line) $database->query($sql_line);
+        }
+        
+        $r = delete_row($this->tbl_obj_type, '`obj_type_latname`='.process_value($this->obj_type_latname));
+        if ($r === false) return "Неизвестная ошибка!";
+        
+        return true;
     }
     
     //function obj_type_get($sets) {
     //    $keys = glue_fields($sets, 'AND');
     //    return select_row($this->tbl_obj_type, '*', $fields);
     //}
+    
 }
 }
 ?>

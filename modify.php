@@ -43,13 +43,14 @@ else $section_settings = $r->fetchRow();
             <td>Тип объектов:</td>
             <td>
                 <select name='obj_type'>
+                    <option disabled<?php if ($obj_types===null || $section_settings['section_obj_type'] === null) echo " selected"; ?>>Не выбрано</option>
                     <?
                     while ($obj_types !== null && $obj_type = $obj_types->fetchRow()) {
-                        ?> <option value="<?=$obj_type['obj_type_id']?>"<?php if ($obj_type['obj_type_id']===$section_settings['obj_type_id']) echo " selected"; ?>><?=$obj_type['obj_type_name']?></option> <?php
+                        ?> <option value="<?=$obj_type['obj_type_id']?>"<?php if ($obj_type['obj_type_id']===$section_settings['section_obj_type']) echo " selected"; ?>><?=$obj_type['obj_type_name']?></option> <?php
                     }
                 ?>
                 </select>
-                <?php if ($obj_type===null) echo "Не установлены модули wbs_portal_obj_*"; ?>
+                <?php if ($obj_types === null) echo "Не установлены модули wbs_portal_obj_*"; ?>
             </td>
         </tr>
     </table>

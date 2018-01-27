@@ -48,7 +48,7 @@ if ($modPortalArgs['action'] == '') $modPortalArgs['action'] = 'show';
 // подключаем файл отображения контента модуля wbs_portal_obj_*
 
 $latname = preg_replace("[^a-z_]", $section_settings['obj_type_latname']);
-$path = WB_PATH."/modules/wbs_portal_{$latname}/{$modPortalArgs['action']}.php";
+$path = WB_PATH."/modules/wbs_portal_obj_{$latname}/actions/{$modPortalArgs['action']}.php";
 if (file_exists($path)) include($path);
 else { $clsModPortal->print_error("Файл не найден: {$latname}/{$modPortalArgs['action']} "); }
 
