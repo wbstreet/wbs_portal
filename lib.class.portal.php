@@ -1,6 +1,6 @@
 <?php
 
-$path_core = WB_PATH.'/modules/wbs_core/include_all.php';
+$path_core = __DIR__.'/../wbs_core/include_all.php';
 if (file_exists($path_core )) include($path_core );
 else echo "<script>console.log('Модуль wbs_portal требует модуль wbs_core')</script>";
 
@@ -103,12 +103,21 @@ if (!class_exists('ModPortalObj')) {
 class ModPortalObj extends _ModPortal {
 
     public $prefix = 'wbs_portal_obj_';
-
+    public $obj_type_id = null;
+    public $obj_type_is_active = null;
+    
     function __construct($latname, $name, $page_id, $section_id) {
-        parent::__construct($this->prefix.$name, $page_id, $section_id);
+        parent::__construct($this->prefix.$latname, $page_id, $section_id);
         
         $this->obj_type_latname = $latname;
         $this->obj_type_name = $name;
+        
+        $r = select_row($this->tbl_obj_type, '*', "`obj_type_latname`=".process_value($this->obj_type_latname));
+        if ($r !== false && $r !== null) {
+            $row = $r->fetchRow();
+            $this->obj_type_id = $row['obj_type_id'];
+            $this->v = $row['obj_type_is_active'];     
+        }
     }
 
     /* Используется модулями wbs_portal_obj_* в процессе их установки */
