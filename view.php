@@ -36,24 +36,27 @@ if ($r === false) {echo "Неизвестная ошибка!"; $section_setting
 else if ($r === null) { $clsModPortal->print_error(" Настройки секции не найдены. Вероятно, не установлены модули wbs_portal_obj_*"); $section_settings = null; }
 else $section_settings = $r->fetchRow();
 
-// вынимаем аргументы
+if ($section_settings['section_is_active'] === '1') {
 
-$modPortalArgs = [
-    'action' => isset($_GET['action']) ? preg_replace("/[^a-z0-9_]+/", '', $_GET['action']) : 'view',
-    'obj_id' => $clsFilter->f2($_GET, 'obj_id', [['integer', '']], 'default', null),
-    'category_id' => $clsFilter->f2($_GET, 'category_id', [['integer', '']], 'default', null),
-    'page_num' => $clsFilter->f2($_GET, 'page_num', [['integer', '']], 'default', 1),
-    'obj_per_page' => $clsFilter->f2($_GET, 'obj_per_page', [['integer', '']], 'default', 10),
-    'settlement_id' => $clsFilter->f2($_COOKIE, 'settlement_id', [['integer', '']], 'default', 10),
-    's' => $clsFilter->f2($_GET, 's', [['1', '']], 'default', null),
-];
-if ($modPortalArgs['action'] == '') $modPortalArgs['action'] = 'view';
-
-// подключаем файл отображения контента модуля wbs_portal_obj_*
-
-$latname = preg_replace("[^a-z_]", '', $section_settings['obj_type_latname']);
-$path = WB_PATH."/modules/wbs_portal_obj_{$latname}/actions/{$modPortalArgs['action']}.php";
-if (file_exists($path)) include($path);
-else { $clsModPortal->print_error("Файл не найден: {$latname}/{$modPortalArgs['action']} "); }
+    // вынимаем аргументы
+    
+    $modPortalArgs = [
+        'action' => isset($_GET['action']) ? preg_replace("/[^a-z0-9_]+/", '', $_GET['action']) : 'view',
+        'obj_id' => $clsFilter->f2($_GET, 'obj_id', [['integer', '']], 'default', null),
+        'category_id' => $clsFilter->f2($_GET, 'category_id', [['integer', '']], 'default', null),
+        'page_num' => $clsFilter->f2($_GET, 'page_num', [['integer', '']], 'default', 1),
+        'obj_per_page' => $clsFilter->f2($_GET, 'obj_per_page', [['integer', '']], 'default', 10),
+        'settlement_id' => $clsFilter->f2($_COOKIE, 'settlement_id', [['integer', '']], 'default', 10),
+        's' => $clsFilter->f2($_GET, 's', [['1', '']], 'default', null),
+    ];
+    if ($modPortalArgs['action'] == '') $modPortalArgs['action'] = 'view';
+    
+    // подключаем файл отображения контента модуля wbs_portal_obj_*
+    
+    $latname = preg_replace("[^a-z_]", '', $section_settings['obj_type_latname']);
+    $path = WB_PATH."/modules/wbs_portal_obj_{$latname}/actions/{$modPortalArgs['action']}.php";
+    if (file_exists($path)) include($path);
+    else { $clsModPortal->print_error("Файл не найден: {$latname}/{$modPortalArgs['action']} "); }
+}
 
 ?>
