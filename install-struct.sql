@@ -1,14 +1,3 @@
-
-
-DROP TABLE IF EXISTS `{TABLE_PREFIX}mod_wbs_portal_obj_type`;
-CREATE TABLE `{TABLE_PREFIX}mod_wbs_portal_obj_type` (
-  `obj_type_id` int(11) NOT NULL AUTO_INCREMENT,
-  `obj_type_latname` varchar(20) NOT NULL,
-  `obj_type_name` varchar(20) NOT NULL,
-  `obj_type_is_active` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`obj_type_id`)
-){TABLE_ENGINE=MyISAM};
-
 DROP TABLE IF EXISTS `{TABLE_PREFIX}mod_wbs_portal_section_settings`;
 CREATE TABLE `{TABLE_PREFIX}mod_wbs_portal_section_settings` (
   `page_id` int(11) NOT NULL,

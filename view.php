@@ -55,8 +55,11 @@ if ($section_settings['section_is_active'] === '1') {
     
     $latname = preg_replace("[^a-z_]", '', $section_settings['obj_type_latname']);
     $path = WB_PATH."/modules/wbs_portal_obj_{$latname}/actions/{$modPortalArgs['action']}.php";
-    if (file_exists($path)) include($path);
-    else { $clsModPortal->print_error("Файл не найден: {$latname}/{$modPortalArgs['action']} "); }
+    if (file_exists($path)) {
+        require_once(WB_PATH.'/include/captcha/captcha.php');
+        if(function_exists('wbs_core_include')) wbs_core_include(['functions.js', 'windows.js', 'windows.css', 'effects.css']);
+        include($path);
+    } else { $clsModPortal->print_error("Файл не найден: {$latname}/{$modPortalArgs['action']} "); }
 }
 
 ?>

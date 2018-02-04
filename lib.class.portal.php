@@ -52,6 +52,21 @@ class ModPortal extends _ModPortal {
         return true;
         
     }
+
+    function install() {
+        global $database;
+        $sql = "
+CREATE TABLE IF NOT EXISTS {$this->tbl_obj_type} (
+  `obj_type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `obj_type_latname` varchar(20) NOT NULL,
+  `obj_type_name` varchar(20) NOT NULL,
+  `obj_type_is_active` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`obj_type_id`)
+);";
+        $r = $database->query($sql);
+        if ($database->is_error()) return $database->get_error();
+        return true;
+    }
     
     function section_add() {
         global $database;
@@ -125,6 +140,11 @@ class ModPortalObj extends _ModPortal {
     function install($sql_lines=null) {
         global $database;
 
+        // создаём общую для всех таблицу, если главный модуль ещё не был установлен
+        $clsModPortal = new ModPortal(null, null);
+        $r = $clsModPortal->install();
+        if ($r !== true) { return $r; }
+        
         // проверяем на наличие дубликата
 
         $r = select_row($this->tbl_obj_type, "COUNT('obj_type_latname') as ocount", "`obj_type_latname`=".process_value($this->obj_type_latname));

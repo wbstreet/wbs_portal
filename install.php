@@ -23,5 +23,11 @@ if (is_readable(__DIR__.'/install-struct.sql')) {
     }
 }
 
+include(__DIR__.'/lib.class.portal.php');
+$clsModPortal = new ModPortal(null, null);
+$r = $clsModPortal->install();
+if ($r !== true) {
+    $admin->print_error($r);
+}
 
 ?>
