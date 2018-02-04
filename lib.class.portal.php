@@ -32,13 +32,13 @@ class ModPortal extends _ModPortal {
         // проверяем, существует хоть какой-нибудь модуль wbs_portal_obj_*
 
         $r = select_row($this->tbl_obj_type, 'COUNT(`obj_type_id`) as pcount');
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r->fetchRow()['pcount'] > 0) return "Существуют модули wbs_portal_obj_* !";
         
         // проверяем, существует хоть какой-нибудь объект в любой секции
 
         $r = select_row($this->tbl_obj_settings, 'COUNT(`page_id`) as pcount');
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r->fetchRow()['pcount'] > 0) return "У модулей wbs_portal_obj_* есть объекты!";
         
         // проверяет, есть секция, сам WebsiteBaker
@@ -59,13 +59,13 @@ class ModPortal extends _ModPortal {
         // проверяем, есть ли на этой странице секция этого же модлуля
         
         $r = select_row($this->tbl_section_settings, '*', "`page_id`=".process_value($this->page_id));
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r !== null && $r->numRows() > 0) return "На одну страницу можно установить одну такую секцию!";
 
         // проверяем, существует хоть какой-нибудь модуль wbs_portal_obj_*
 
         $r = select_row($this->tbl_obj_type, 'COUNT(`obj_type_id`) as ocount');
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r !== null && $r->fetchRow()['ocount'] === '0') return "Отсутствуют модули wbs_portal_obj_* !";
         
         // добавляем настройки для данной секции
@@ -84,7 +84,7 @@ class ModPortal extends _ModPortal {
         // проверяем, существует хоть какой-нибудь объект в данной секции
         
         $r = select_row($this->tbl_obj_settings, 'COUNT(`page_id`) as pcount', "`page_id`=".process_value($this->page_id)." AND "."`section_id`=".process_value($this->section_id));
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r !== null && $r->fetchRow()['pcount'] > 0) return "У данной секции есть объекты!";
 
         // если нет, удаляем настройки для данной секции
@@ -127,8 +127,8 @@ class ModPortalObj extends _ModPortal {
 
         // проверяем на наличие дубликата
 
-        $r = select_row($this->tbl_obj_type, '*', "`obj_type_latname`=".process_value($this->obj_type_latname));
-        if ($r === false) return "Неизвестная ошибка!";
+        $r = select_row($this->tbl_obj_type, "COUNT('obj_type_latname') as ocount", "`obj_type_latname`=".process_value($this->obj_type_latname));
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r !== null && $r->fetchRow()['ocount'] !== '0') return "Модуль с таким названием уже существует!";
 
         // если дубликатата нет, то добавляем
@@ -138,7 +138,7 @@ class ModPortalObj extends _ModPortal {
         }
 
         $r = insert_row($this->tbl_obj_type, ['obj_type_latname'=>$this->obj_type_latname, 'obj_type_name'=>$this->obj_type_name]);
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         
         return true;
     
@@ -154,7 +154,7 @@ class ModPortalObj extends _ModPortal {
             'COUNT(`page_id`) as pcount',
             $this->tbl_obj_type.".`obj_type_latname`=".process_value($this->obj_type_latname)." AND ".$this->tbl_obj_settings.".`obj_type_id`=".$this->tbl_obj_type.".`obj_type_id`"
         );
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r->fetchRow()['pcount'] > 0) return "У модуля есть объекты!";
 
         // проверяем, используется ли этот модуль на секциях
@@ -164,7 +164,7 @@ class ModPortalObj extends _ModPortal {
             'COUNT(`page_id`) as pcount',
             $this->tbl_obj_type.".`obj_type_latname`=".process_value($this->obj_type_latname)." AND ".$this->tbl_section_settings.".`section_obj_type`=".$this->tbl_obj_type.".`obj_type_id`"
         );
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         if ($r !== null && $r->fetchRow()['pcount'] !== '0') return "Модуль установлен на некоторых секциях!";
 
         // если не используется, то удаляем объект
@@ -174,7 +174,7 @@ class ModPortalObj extends _ModPortal {
         }
         
         $r = delete_row($this->tbl_obj_type, '`obj_type_latname`='.process_value($this->obj_type_latname));
-        if ($r === false) return "Неизвестная ошибка!";
+        if (gettype($r) === 'string') return "Неизвестная ошибка!";
         
         return true;
     }
