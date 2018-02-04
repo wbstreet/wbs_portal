@@ -113,7 +113,8 @@ class ModPortalObj extends _ModPortal {
         $this->obj_type_name = $name;
         
         $r = select_row($this->tbl_obj_type, '*', "`obj_type_latname`=".process_value($this->obj_type_latname));
-        if ($r !== false && $r !== null) {
+        //Ошибка возникнет при установке модуля, так как требуемой таблицы пока нет (появится после установки0
+        if ($r !== false && $r !== null && gettype($r) !== 'string') {
             $row = $r->fetchRow();
             $this->obj_type_id = $row['obj_type_id'];
             $this->v = $row['obj_type_is_active'];     
