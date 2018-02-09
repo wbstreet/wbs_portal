@@ -132,7 +132,7 @@ class ModPortalObj extends _ModPortal {
         if ($r !== false && $r !== null && gettype($r) !== 'string') {
             $row = $r->fetchRow();
             $this->obj_type_id = $row['obj_type_id'];
-            $this->v = $row['obj_type_is_active'];     
+            $this->obj_type_is_active = $row['obj_type_is_active'];     
         }
     }
 
