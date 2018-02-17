@@ -220,6 +220,45 @@ class ModPortalObj extends _ModPortal {
         return $_fields;
     }
     
+    function _getobj_where($sets, &$aWhere) {
+        
+        if (isset($sets['obj_id']))     $aWhere[] = "{$this->tbl_obj_settings}.`obj_id`=".process_value($sets['obj_id']);
+        //if (isset($sets['settlement_id']) && $sets['settlement_id'] !== null) $aWhere[] = '`settlement_id`='.process_value($sets['settlement_id']);
+        if (isset($sets['is_active']))  $aWhere[] = "{$this->tbl_obj_settings}.`is_active`=".process_value($sets['is_active']);
+        if (isset($sets['is_moder']))   $aWhere[] = "{$this->tbl_obj_settings}.`moder_status`=".process_value($sets['is_moder']);
+        if (isset($sets['is_deleted'])) $aWhere[] = "{$this->tbl_obj_settings}.`is_deleted`=".process_value($sets['is_deleted']);
+
+        if (isset($sets['page_id']))    $aWhere[] = "{$this->tbl_obj_settings}.`page_id`=".process_value($sets['page_id']);
+        if (isset($sets['section_id'])) $aWhere[] = "{$this->tbl_obj_settings}.`section_id`=".process_value($sets['section_id']);
+        
+    }
+    
+    function _getobj_order_limit($sets, $glue=true) {
+        $order = build_order($sets['order_by'] ?? null, $sets['order_dir'] ?? null);
+
+        if (isset($sets['limit_offset'])) $limit_offset = (integer)($sets['limit_offset']); else $limit_offset = null;
+        if (isset($sets['limit_count'])) $limit_count = (integer)($sets['limit_count']); else $limit_count = null;
+        $limit = build_limit($limit_offset, $limit_count);
+        
+        return $glue ? $order.' '.$limit : [$order, $limit];
+    }
+
+    function _getobj_return($sql, $only_count) {
+        global $database;
+
+        $r = $database->query($sql);
+        if ($database->is_error()) return $database->get_error();
+
+        if ($only_count) {
+            $count = $r->fetchRow()['count'];
+            return (integer)$count;
+        } else {
+            if ($r->numRows() === 0) return null;
+            return $r;
+        }
+
+    }
+
     //function obj_type_get($sets) {
     //    $keys = glue_fields($sets, 'AND');
     //    return select_row($this->tbl_obj_type, '*', $fields);
