@@ -26,5 +26,7 @@ CREATE TABLE `{TABLE_PREFIX}mod_wbs_portal_obj_settings` (
   `substrate_border_left` int(11) DEFAULT '0',
   `substrate_border_right` int(11) DEFAULT '0',
   `bg_image` int(11),
+  `seo_description` varchar(255) DEFAULT '',
+  `seo_keywords` varchar(255) DEFAULT '',
   PRIMARY KEY (`obj_id`)
 ){TABLE_ENGINE=MyISAM};

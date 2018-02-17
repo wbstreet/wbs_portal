@@ -14,6 +14,15 @@ class _ModPortal extends Addon {
         $this->tbl_section_settings = "`".TABLE_PREFIX."mod_wbs_portal_section_settings`";        
     }
 
+    function _get_obj() {
+        if (isset($_GET['obj_id']) && $_GET['obj_id']) {
+            $r = select_row($this->tbl_obj_settings, '*', '`obj_id`='.process_value($_GET['obj_id']));
+            if (gettype($r) === 'string') return null;
+            if ($r === null) return null;
+            
+            return $r->fetchRow();
+        } else return null;
+    }
 }
 }
 
