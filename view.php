@@ -48,6 +48,7 @@ if ($section_settings['section_is_active'] === '1') {
         'obj_per_page' => $clsFilter->f2($_GET, 'obj_per_page', [['integer', '']], 'default', 10),
         'settlement_id' => $clsFilter->f2($_COOKIE, 'settlement_id', [['integer', '']], 'default', 10),
         's' => $clsFilter->f2($_GET, 's', [['1', '']], 'default', null),
+        's_in' => isset($_GET['s_in']) ? preg_replace("/[^a-z0-9_,]+/", '', $_GET['s_in']) : null,
     ];
     if ($modPortalArgs['action'] == '') $modPortalArgs['action'] = 'view';
     

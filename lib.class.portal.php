@@ -259,6 +259,24 @@ class ModPortalObj extends _ModPortal {
 
     }
 
+    function _getobj_search($sets, $keys) {
+        global $database;
+        
+        if (!isset($sets['find_str']) || $sets['find_str'] === null) return null;
+
+        $s = str_replace('%', '\%', $database->escapeString($sets['find_str']));
+        $s_in = isset($sets['find_in']) && $sets['find_in'] ? explode(',', $sets['find_in']) : [];
+        if (count($s_in) === 0) $s_in = array_keys($keys);
+
+        $where_find = [];
+        foreach($s_in as $i => $key) {
+            if (!isset($keys[$key])) continue;
+            $where_find[] = $keys[$key]." LIKE '%$s%'";
+        }
+        
+        return '('.implode(' OR ', $where_find).')';
+    }
+    
     //function obj_type_get($sets) {
     //    $keys = glue_fields($sets, 'AND');
     //    return select_row($this->tbl_obj_type, '*', $fields);
