@@ -1,0 +1,9 @@
+<form>
+    Описание: <br>
+    <textarea name="seo_description" style="width:100%;" rows="5">{{ obj.seo_description }}</textarea>
+    <br>
+    Ключевые слова: <br>
+    <textarea name="seo_keywords" style="width:100%;" rows="5">{{ obj.seo_keywords }}</textarea>
+    
+    <input type="button" value="Сохранить" onclick="sendform(this, 'update_obj_settings', {data:{ {{spoa}} }, {{ url_api }} });">
+</form>
