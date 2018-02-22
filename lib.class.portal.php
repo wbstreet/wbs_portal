@@ -210,7 +210,7 @@ class ModPortalObj extends _ModPortal {
 
     function split_arrays(&$fields) {
         $_fields = [];
-        $f= "obj_id,page_id,section_id,obj_type_id,user_owner_id,is_active,is_deleted, moder_status,moder_comment,date_created,date_end_activity,substrate_color,substrate_opacity,substrate_border_color,substrate_border_left,substrate_border_right,bg_image";
+        $f= "obj_id,page_id,section_id,obj_type_id,user_owner_id,is_active,is_deleted, moder_status,moder_comment,date_created,date_end_activity,substrate_color,substrate_opacity,substrate_border_color,substrate_border_left,substrate_border_right,bg_image,seo_description,seo_keywords";
         $common_fields = explode(',', $f);
         foreach ($common_fields as $k => $v) {
             if (!in_array($v, array_keys($fields))) continue;
