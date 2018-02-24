@@ -228,6 +228,9 @@ class ModPortalObj extends _ModPortal {
         if (isset($sets['is_moder']))   $aWhere[] = "{$this->tbl_obj_settings}.`moder_status`=".process_value($sets['is_moder']);
         if (isset($sets['is_deleted'])) $aWhere[] = "{$this->tbl_obj_settings}.`is_deleted`=".process_value($sets['is_deleted']);
 
+        if (isset($sets['owner_id']))   $aWhere[] = "{$this->tbl_obj_settings}.`user_owner_id`=".process_value($sets['owner_id']);
+        else if (isset($sets['user_owner_id']))   $aWhere[] = "{$this->tbl_obj_settings}.`user_owner_id`=".process_value($sets['user_owner_id']);
+
         if (isset($sets['page_id']))    $aWhere[] = "{$this->tbl_obj_settings}.`page_id`=".process_value($sets['page_id']);
         if (isset($sets['section_id'])) $aWhere[] = "{$this->tbl_obj_settings}.`section_id`=".process_value($sets['section_id']);
         
